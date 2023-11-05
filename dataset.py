@@ -5,6 +5,7 @@ from tokenizers import Tokenizer
 from tokenizers.trainers import WordLevelTrainer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import Whitespace
+from datasets import load_dataset
 
 
 class LanguageDataset(Dataset):
@@ -106,10 +107,42 @@ def build_tokenizer(config, raw_dataset):
         tokenizer.pre_tokenizer = Whitespace()
         trainer = WordLevelTrainer(special_tokens=["<UNK>", "<PAD>", "<SOS>", "<EOS>"])
         tokenizer.train_from_iterator(
-            retrieve_sentence(dataset, config), trainer=trainer
+            retrieve_sentence(raw_dataset, config), trainer=trainer
         )
         tokenizer.save(str(tokenizer_path))
     else:
         tokenizer = Tokenizer.from_file(str(tokenizer_path))
 
     return tokenizer
+
+
+def build_dataloader_and_tokenizers(config):
+    raw_dataset = load_dataset("opus_books", "en-fr", split="train")
+    src_tokenizer = build_tokenizer(config, raw_dataset)
+    tgt_tokenizer = build_tokenizer(config, raw_dataset)
+
+    train_size = int(0.9 * len(raw_dataset))
+    val_size = len(raw_dataset) - train_size
+    raw_train, raw_val = random_split(raw_dataset, [train_size, val_size])
+
+    train = LanguageDataset(
+        raw_train,
+        config["seq_len"],
+        src_tokenizer,
+        tgt_tokenizer,
+        config["src_lang"],
+        config["tgt_lang"],
+    )
+    val = LanguageDataset(
+        raw_val,
+        config["seq_len"],
+        src_tokenizer,
+        tgt_tokenizer,
+        config["src_lang"],
+        config["tgt_lang"],
+    )
+
+    train_dataloader = DataLoader(train, batch_size=config["batch_size"], shuffle=True)
+    val_dataloader = DataLoader(val, batch_size=1, shuffle=True)
+
+    return train_dataloader, val_dataloader, src_tokenizer, tgt_tokenizer

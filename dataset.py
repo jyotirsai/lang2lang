@@ -9,10 +9,10 @@ from tokenizers.pre_tokenizers import Whitespace
 
 class LanguageDataset(Dataset):
     def __init__(
-        self, dataset, seq_len, src_tokenizer, tgt_tokenizer, src_lang, tgt_lang
+        self, raw_dataset, seq_len, src_tokenizer, tgt_tokenizer, src_lang, tgt_lang
     ):
         super().__init__()
-        self.dataset = dataset
+        self.dataset = raw_dataset
         self.seq_len = seq_len
         self.src_tokenizer = src_tokenizer
         self.tgt_tokenizer = tgt_tokenizer
@@ -33,16 +33,73 @@ class LanguageDataset(Dataset):
     def __len__(self):
         return len(self.dataset)
 
-    def __getitem__(self, index) -> Any:
-        return super().__getitem__(index)
+    def __getitem__(self, index):
+        src_text = self.dataset[index]["translation"][self.src_lang]
+        tgt_text = self.dataset[index]["translation"][self.tgt_lang]
+
+        enc_input_ids = self.src_tokenizer.encode(src_text).ids
+        dec_input_ids = self.tgt_tokenizer.encode(tgt_text).ids
+
+        num_enc_padding = self.seq_len - len(enc_input_ids) - 2  # <SOS>, <EOS>
+        num_dec_padding = self.seq_len - len(dec_input_ids) - 1  # <SOS>
+
+        if num_enc_padding < 0 or num_dec_padding < 0:
+            raise ValueError("Sentence is too long")
+
+        enc_input = torch.cat(
+            [
+                self.sos_token,
+                torch.tensor(enc_input_ids, dtype=torch.int64),
+                self.eos_token,
+                torch.tensor([self.pad_token] * num_enc_padding, dtype=torch.int64),
+            ]
+        )
+
+        dec_input = torch.cat(
+            [
+                self.sos_token,
+                torch.tensor(dec_input_ids, dtype=torch.int64),
+                torch.tensor([self.pad_token] * num_dec_padding, dtype=torch.int64),
+            ]
+        )
+
+        label = torch.cat(
+            [
+                torch.tensor(dec_input_ids, dtype=torch.int64),
+                self.eos_token,
+                torch.tensor([self.pad_token] * num_dec_padding, dtype=torch.int64),
+            ]
+        )
+
+        return {
+            "encoder_input": enc_input,
+            "decoder_input": dec_input,
+            "encoder_mask": (enc_input != self.pad_token)
+            .unsqueeze(0)
+            .unsqueeze(0)
+            .int(),  # (1, seq_len)
+            "decoder_mask": (dec_input != self.pad_token)
+            .unsqueeze(0)
+            .unsqueeze(0)
+            .int()
+            & causal_mask(dec_input.size(0)),
+            "label": label,
+            "src_text": src_text,
+            "tgt_text": tgt_text,
+        }
 
 
-def retrieve_sentence(config, dataset):
-    for sentence in dataset:
+def causal_mask(size):
+    mask = torch.triu(torch.ones(1, size, size), diagonal=1).type(torch.int)
+    return mask == 0
+
+
+def retrieve_sentence(config, raw_dataset):
+    for sentence in raw_dataset:
         yield sentence["translation"][config["lang"]]
 
 
-def build_tokenizer(config, dataset):
+def build_tokenizer(config, raw_dataset):
     tokenizer_path = Path(config["tokenizer_file"].format(config["lang"]))
     if not Path.exists(tokenizer_path):
         tokenizer = Tokenizer(WordLevel(unk_token="<UNK>"))

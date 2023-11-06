@@ -118,8 +118,8 @@ def build_tokenizer(config, raw_dataset, lang):
 
 def build_dataloader_and_tokenizers(config):
     raw_dataset = load_dataset("opus_books", "en-fr", split="train")
-    src_tokenizer = build_tokenizer(config, raw_dataset, config["lang_src"])
-    tgt_tokenizer = build_tokenizer(config, raw_dataset, config["lang_tgt"])
+    src_tokenizer = build_tokenizer(config, raw_dataset, config["src_lang"])
+    tgt_tokenizer = build_tokenizer(config, raw_dataset, config["tgt_lang"])
 
     train_size = int(0.9 * len(raw_dataset))
     val_size = len(raw_dataset) - train_size

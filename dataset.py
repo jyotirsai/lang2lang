@@ -95,9 +95,9 @@ def causal_mask(size):
     return mask == 0
 
 
-def retrieve_sentence(config, raw_dataset):
+def retrieve_sentence(config, raw_dataset, lang):
     for sentence in raw_dataset:
-        yield sentence["translation"][config["lang"]]
+        yield sentence["translation"][config[lang]]
 
 
 def build_tokenizer(config, raw_dataset, lang):
@@ -107,7 +107,7 @@ def build_tokenizer(config, raw_dataset, lang):
         tokenizer.pre_tokenizer = Whitespace()
         trainer = WordLevelTrainer(special_tokens=["<UNK>", "<PAD>", "<SOS>", "<EOS>"])
         tokenizer.train_from_iterator(
-            retrieve_sentence(raw_dataset, config), trainer=trainer
+            retrieve_sentence(raw_dataset, config, lang), trainer=trainer
         )
         tokenizer.save(str(tokenizer_path))
     else:

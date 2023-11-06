@@ -101,7 +101,7 @@ def retrieve_sentence(config, raw_dataset):
 
 
 def build_tokenizer(config, raw_dataset, lang):
-    tokenizer_path = Path(config["tokenizer_file"].format(lang)
+    tokenizer_path = Path(config["tokenizer_file"].format(lang))
     if not Path.exists(tokenizer_path):
         tokenizer = Tokenizer(WordLevel(unk_token="<UNK>"))
         tokenizer.pre_tokenizer = Whitespace()
@@ -118,8 +118,8 @@ def build_tokenizer(config, raw_dataset, lang):
 
 def build_dataloader_and_tokenizers(config):
     raw_dataset = load_dataset("opus_books", "en-fr", split="train")
-    src_tokenizer = build_tokenizer(config, raw_dataset, config['lang_src'])
-    tgt_tokenizer = build_tokenizer(config, raw_dataset, config['lang_tgt'])
+    src_tokenizer = build_tokenizer(config, raw_dataset, config["lang_src"])
+    tgt_tokenizer = build_tokenizer(config, raw_dataset, config["lang_tgt"])
 
     train_size = int(0.9 * len(raw_dataset))
     val_size = len(raw_dataset) - train_size

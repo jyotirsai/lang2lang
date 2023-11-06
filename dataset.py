@@ -107,7 +107,7 @@ def build_tokenizer(config, raw_dataset, lang):
         tokenizer.pre_tokenizer = Whitespace()
         trainer = WordLevelTrainer(special_tokens=["<UNK>", "<PAD>", "<SOS>", "<EOS>"])
         tokenizer.train_from_iterator(
-            retrieve_sentence(raw_dataset, config, lang), trainer=trainer
+            retrieve_sentence(raw_dataset, lang), trainer=trainer
         )
         tokenizer.save(str(tokenizer_path))
     else:

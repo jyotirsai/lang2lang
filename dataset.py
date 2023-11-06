@@ -95,9 +95,9 @@ def causal_mask(size):
     return mask == 0
 
 
-def retrieve_sentence(config, raw_dataset, lang):
+def retrieve_sentence(raw_dataset, lang):
     for sentence in raw_dataset:
-        yield sentence["translation"][config[lang]]
+        yield sentence["translation"][lang]
 
 
 def build_tokenizer(config, raw_dataset, lang):

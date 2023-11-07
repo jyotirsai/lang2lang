@@ -10,6 +10,6 @@ def load_config(config_file):
 
 def weights_file_path(config, epochs):
     model_folder = config["model_folder"]
-    model_basename = config["model_basename"]
+    model_basename = "model"
     model_filename = f"{model_basename}{epochs}.pt"
     return str(Path(".") / model_folder / model_filename)

@@ -68,7 +68,7 @@ class MultiHeadAttention(nn.Module):
         return x.view(x.shape[0], x.shape[1], self.h, self.dk).permute(0, 2, 1, 3)
 
     def attention(self, q, k, v, mask, dropout):
-        scores = q @ k.transpose(2, 3) // math.sqrt(self.dk)
+        scores = q @ k.transpose(2, 3) / math.sqrt(self.dk)
         if mask is not None:
             scores.masked_fill(mask == 0, -1e9)
 

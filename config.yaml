@@ -1,6 +1,6 @@
 batch_size: 8
 num_epochs: 20
-lr: 1e-4
+lr: 0.0001
 seq_len: 650
 d_model: 512
 n_times: 6

@@ -8,6 +8,7 @@ from tqdm import tqdm
 import mlflow
 import mlflow.pytorch
 from tqdm import tqdm
+from config import get_config
 
 
 def train(config):
@@ -138,3 +139,7 @@ def train(config):
             'prev_val_loss': prev_val_loss
         }, model_filename)
         mlflow.end_run()
+
+if __name__ == "__main__":
+    config = get_config()
+    train(config)

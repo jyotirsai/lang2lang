@@ -5,8 +5,7 @@ from pathlib import Path
 def get_weights_file_path(config, epoch):
     model_folder = config['model_folder']
     model_filename = f"{config['model_basename']}{epoch}.pt"
-    path_list = list(Path(model_folder).glob(model_filename))
-    return str(path_list[-1])
+    return str(config['model_folder'] + '/' + model_filename)
 
 # Find the latest weights file in the weights folder
 def latest_weights_file_path(config):

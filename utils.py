@@ -3,8 +3,10 @@ from pathlib import Path
 
 # code from https://github.com/hkproj/pytorch-transformer/blob/main/config.py
 def get_weights_file_path(config, epoch):
+    model_folder = config['model_folder']
     model_filename = f"{config['model_basename']}{epoch}.pt"
-    return str(config['model_folder'] / model_filename)
+    path_list = list(Path(model_folder).glob(model_filename))
+    return str(path_list[-1])
 
 # Find the latest weights file in the weights folder
 def latest_weights_file_path(config):

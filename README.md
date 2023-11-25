@@ -10,6 +10,9 @@ the diagram from the original paper for reference.
 
 <p align="center">
     <img src="transformer.png" alt="Transformer model" width="400" height="500">
+</p>
+
+<p align="center">
     <i>The Transformer model from the paper "Attention is All You Need" [1].</i>
 </p>
 

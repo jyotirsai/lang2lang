@@ -10,6 +10,7 @@ the diagram from the original paper for reference.
 
 <p align="center">
     <img src="transformer.png" alt="Transformer model" width="400" height="500">
+    <i>The Transformer model from the paper "Attention is All You Need" [1].</i>
 </p>
 
 There is a custom module for the Embeddings, PositionalEncoding, Multi-Head Attention, Feed Forward Network,
@@ -30,6 +31,19 @@ be reformatted into the following format:
 ]
 ```
 
-## Customizing the model
+## Training
 
-Work in progress.
+Training the model simply requires passing the config dictionary to the train function
+
+```python
+config = get_config()
+train(config)
+```
+
+## Inference
+
+Work in progress
+
+## References
+
+[1] - A. Vaswani et al., "Attention is All You Need," arXiv preprint arXiv:1706.03762, 2017. [Online]. Available: https://arxiv.org/abs/1706.03762.

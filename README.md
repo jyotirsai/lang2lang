@@ -36,16 +36,24 @@ be reformatted into the following format:
 
 ## Training
 
-Training the model simply requires passing the config dictionary to the train function
+Training the model simply requires passing the config dictionary to the train function.
 
 ```python
+from train import train
+fron config import get_config
+
 config = get_config()
 train(config)
 ```
 
 ## Inference
 
-Work in progress
+```python
+from inference import inference
+
+input = "hello"
+output = inference(input)
+```
 
 ## References
 

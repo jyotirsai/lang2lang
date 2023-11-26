@@ -55,6 +55,20 @@ input = "hello"
 output = inference(input)
 ```
 
+## Requirements
+
+<ul>
+    <li>datasets==2.14.6</li>
+    <li>mlflow==2.8.1</li>
+    <li>tokenizers==0.15.0</li>
+    <li>torch==2.1.0</li>
+    <li>tqdm==4.64.0</li>
+</ul>
+
 ## References
 
 [1] - A. Vaswani et al., "Attention is All You Need," arXiv preprint arXiv:1706.03762, 2017. [Online]. Available: https://arxiv.org/abs/1706.03762.
+
+[2] - J. Alammar, "The Illustrated Transformer," 2023. [Online]. Available: https://jalammar.github.io/illustrated-transformer/.
+
+[3] - U. Jamil, "Attention is all you need (Transformer) - Model explanation (including math), Inference and Training" YouTube, 2023. [Online]. Available: https://www.youtube.com/watch?v=bCz4OMemCcA.
